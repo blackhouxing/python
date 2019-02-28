@@ -1,26 +1,23 @@
-
-column = ['staff_id','name','age','phone','dept','enroll_date']
-db_file = 'staff_info'
-
+COLUMN = ['staff_id','name','age','phone','dep','enroll_date',]
+db_file = 'staff_db'
 
 def load_db(db_file):
-    #加载员工信息
     data = {}
-    for i in column:
+    for i in COLUMN:
         data[i] = []
 
-    with open('staff_info', 'r') as f:
-        #转换员工新表格式，从文本转换为字典
+    with open(db_file,'r') as f:
         for line in f:
-            # print(line)
-            staff_id,name,age,phone,dept,enroll_date = line.split(",")
+            staff_id,name,age,phone,dep,enroll_date = line.split(',')
             data['staff_id'].append(staff_id)
             data['name'].append(name)
             data['age'].append(age)
             data['phone'].append(phone)
-            data['dept'].append(dept)
+            data['dep'].append(dep)
             data['enroll_date'].append(enroll_date)
+        # print(data)
         return data
+
 STAFF_DATA = load_db(db_file)
 
 def op_gt():
@@ -35,48 +32,46 @@ def op_eq():
 def op_like():
     pass
 
-def syntax_where(clause):
+def syntax_find():
+    pass
 
+def syntax_update():
+    pass
 
-    '''
-    解析where条件，并过滤数据
-    :param clause:
-    :return:
-    '''
+def syntax_add():
+    pass
 
-    operators = {
-        '>':op_gt,
-        '<':op_lt,
-        '=':op_eq,
-        'like':op_like,
-    }
+def syntax_delete():
 
-    for op_key,op_func in operators.items():
-        if op_key in clause:
-            # print(clause)
-            column,val = clause.split(op_key)
+    pass
 
-            # print(column,val)
-            break
-    else:
-        print("语法错误：where条件只能支持[>,<,=,like]")
-
+def syntax_where(where_clause):
+    pass
 
 def syntax_parser(cmd):
-    if cmd.split()[0] in ('find','add','del','update'):
+    if cmd.split()[0] in ('find','add','delete','update'):
         query_clause,where_clause = cmd.split('where')
-        print(query_clause,where_clause)
+        # print(query_clause,where_clause)
         syntax_where(where_clause)
-
     else:
-        print("\033[31;1m语法错误：\033[0m\n[find\\add\\del\\update] [columl,,] from [staff_info]")
+        print("\033[31:1m语法错误：\033[0m\n[find\\add\\del\\update] [column,,] from [staff_info] where [condition]")
+
 
 
 def main():
-
     while True:
-        cmd = input("[staff_id]:").strip()
+        cmd = input("[staff_data]:").strip()
+        # print(cmd)
         if not cmd:continue
         syntax_parser(cmd)
-
 main()
+
+
+
+
+
+
+
+
+
+
