@@ -20,6 +20,12 @@ def load_db(db_file):
 
 STAFF_DATA = load_db(db_file)
 
+def print_log(msg,log_type = 'info'):
+    if log_type == 'info':
+        print(msg)
+    elif log_type == 'error':
+        print("\033[31;1m%s\033[0m"%msg)
+
 def op_gt():
     pass
 
@@ -45,8 +51,21 @@ def syntax_delete():
 
     pass
 
-def syntax_where(where_clause):
-    pass
+def syntax_where(clause):
+    operator = {
+        '>':op_gt(),
+        '<':op_lt(),
+        '=':op_eq(),
+        'like':op_like(),
+        }
+    for op_key,op_func in operator.items():
+        if op_key in clause:
+            column,condition = clause.split(op_key)
+            print(column,condition)
+
+            break
+        else:
+            print_log("语法错误：where条件只能支持[>,<,=，like]","error")
 
 def syntax_parser(cmd):
     if cmd.split()[0] in ('find','add','delete','update'):
@@ -54,7 +73,7 @@ def syntax_parser(cmd):
         # print(query_clause,where_clause)
         syntax_where(where_clause)
     else:
-        print("\033[31:1m语法错误：\033[0m\n[find\\add\\del\\update] [column,,] from [staff_info] where [condition]")
+        print_log("语法错误：[find\\add\\del\\update] [column,,] from [staff_info] where [condition]","error")
 
 
 
