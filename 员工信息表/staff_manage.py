@@ -1,3 +1,5 @@
+from tabulate import tabulate
+
 COLUMN = ['staff_id','name','age','phone','dep','enroll_date',]
 db_file = 'staff_db'
 
@@ -19,7 +21,16 @@ def load_db(db_file):
         return data
 
 STAFF_DATA = load_db(db_file)
+print(STAFF_DATA)
 
+def save_db():
+    f = open("%s.new"%db_file,'w',encoding='utf-8')
+    for index,id in enumerate(STAFF_DATA['staff_id']):
+        row = []
+        for col in COLUMN:
+            row.append(STAFF_DATA[col][index])
+        f.write(','.join(row))
+    f.close()
 
 
 def print_log(msg,log_type = 'info'):
@@ -81,21 +92,47 @@ def syntax_find(data_set,query_clause):
     :return:
     """
     filter_cols_temp = query_clause.split("from")[0][4:].split(',')
-    print(filter_cols_temp)
+    # print(filter_cols_temp)
     filter_cols = [i.strip() for i in filter_cols_temp] #干净的查询条件
-    reformat_data = []
-    for row in data_set:
-        filtered_vals = []
-        for col in filter_cols:
-            col_index = COLUMN.index(col)
-            filtered_vals.append(row[col_index])
-        reformat_data.append(filtered_vals)
+    if '*' in filter_cols[0]:
+        print(tabulate(data_set,headers=filter_cols,tablefmt="grid"))
+    else:
 
-    for i in reformat_data:
-        print(i)
+        reformat_data = []
+        for row in data_set:
+            filtered_vals = []
+            for col in filter_cols:
+                col_index = COLUMN.index(col)
+                filtered_vals.append(row[col_index])
+            reformat_data.append(filtered_vals)
 
+        # for i in reformat_data:
+        #     print(i)
+        print(tabulate(reformat_data,headers=filter_cols,tablefmt="grid"))
+    print_log("匹配到%s条数据！"%len(data_set))
 def syntax_update(data_set,query_clause):
-    print("这是更新操作")
+    """
+
+    :param data_set:
+    :param query_clause: update staff_table set age=25
+    :return:
+    """
+
+    formula_raw = query_clause.split('set')
+    if len(formula_raw) >1:
+        col_name,new_val = formula_raw[1].strip().split('=')
+        # col_index = COLUMN.index(col_name)
+        # print(data_set)
+        for match_row in data_set:
+            staff_id = match_row[0]
+            staff_id_index = STAFF_DATA['staff_id'].index(staff_id)
+            STAFF_DATA[col_name][staff_id_index] = new_val
+
+        print(STAFF_DATA)
+        save_db()
+        print_log("成功修改了%s条数据！"%len(data_set))
+    else:
+        print_log("语法错误：未检测到set关键字！",'error')
 
 def syntax_add():
     pass
@@ -134,10 +171,21 @@ def syntax_parser(cmd):
         }
 
     if cmd.split()[0] in ('find','add','delete','update'):
-        query_clause,where_clause = cmd.split('where')
-        # print(query_clause,where_clause)
-        match_records = syntax_where(where_clause)
-        cmd_action  = query_clause.split()[0]
+        if 'where' in cmd:
+
+            query_clause,where_clause = cmd.split('where')
+            # print(query_clause,where_clause)
+            match_records = syntax_where(where_clause)
+        else:
+            match_records = []
+            for index,staff_id in enumerate(STAFF_DATA['staff_id']):
+                record=[]
+                for col in COLUMN:
+                    record.append((STAFF_DATA[col][index]))
+                match_records.append(record)
+
+            query_clause = cmd
+        cmd_action  = cmd.split()[0]
         if cmd_action in syntax_list:
             syntax_list[cmd_action](match_records,query_clause)
 
