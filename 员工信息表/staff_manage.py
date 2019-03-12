@@ -1,7 +1,9 @@
 from tabulate import tabulate
+import os,sys
 
 COLUMN = ['staff_id','name','age','phone','dep','enroll_date',]
 db_file = 'staff_db'
+new_db_file = 'staff_db.new'
 
 def load_db(db_file):
     data = {}
@@ -134,8 +136,40 @@ def syntax_update(data_set,query_clause):
     else:
         print_log("语法错误：未检测到set关键字！",'error')
 
-def syntax_add():
-    pass
+def syntax_add(STAFF_DATA,user_info):
+    """
+
+    :param STAFF_DATA:
+    :return:
+    """
+    # print(type(user_info))
+
+    user_info_form = user_info.strip().split(',')
+    staff_id_new = str(len(STAFF_DATA['staff_id']) +1)
+    phone = user_info_form[2]
+    # if len(phone) < 11:
+    #     print()
+    # print(staff_id_new)
+    # print(user_info_form)
+    # print(STAFF_DATA['phone'])
+    if len(phone) != 11:
+        print('手机号码格式错误，请输入正确的手机号码！')
+    elif  user_info_form[2] not in STAFF_DATA['phone']:
+            STAFF_DATA['staff_id'].append(staff_id_new)
+            STAFF_DATA['name'].append(user_info_form[0])
+            STAFF_DATA['age'].append(user_info_form[1])
+            STAFF_DATA['phone'].append(phone)
+            STAFF_DATA['dep'].append(user_info_form[3])
+            STAFF_DATA['enroll_date'].append(user_info_form[4]+'\n')
+            print(STAFF_DATA)
+            save_db()
+            os.remove(db_file)
+            os.rename(new_db_file,db_file)
+    else:
+        print_log('%s手机号已存在'%user_info_form[2],'error')
+    # for i in COLUMN:
+    #     print(STAFF_DATA[i])
+
 
 def syntax_delete(data_set,query_clause):
     print("这是删除操作")
@@ -176,6 +210,10 @@ def syntax_parser(cmd):
             query_clause,where_clause = cmd.split('where')
             # print(query_clause,where_clause)
             match_records = syntax_where(where_clause)
+        elif 'user' in cmd:
+            add_cmd_action,user_info = cmd.split('user')
+
+            syntax_list[add_cmd_action.strip()](STAFF_DATA, user_info)
         else:
             match_records = []
             for index,staff_id in enumerate(STAFF_DATA['staff_id']):
@@ -184,8 +222,8 @@ def syntax_parser(cmd):
                     record.append((STAFF_DATA[col][index]))
                 match_records.append(record)
 
-            query_clause = cmd
-        cmd_action  = cmd.split()[0]
+                query_clause = cmd
+        cmd_action = cmd.split()[0]
         if cmd_action in syntax_list:
             syntax_list[cmd_action](match_records,query_clause)
 
