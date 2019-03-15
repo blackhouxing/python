@@ -132,6 +132,8 @@ def syntax_update(data_set,query_clause):
 
         print(STAFF_DATA)
         save_db()
+        os.remove(db_file)
+        os.rename(new_db_file, db_file)
         print_log("成功修改了%s条数据！"%len(data_set))
     else:
         print_log("语法错误：未检测到set关键字！",'error')
@@ -147,32 +149,53 @@ def syntax_add(STAFF_DATA,user_info):
     user_info_form = user_info.strip().split(',')
     staff_id_new = str(len(STAFF_DATA['staff_id']) +1)
     phone = user_info_form[2]
-    # if len(phone) < 11:
-    #     print()
-    # print(staff_id_new)
-    # print(user_info_form)
-    # print(STAFF_DATA['phone'])
+
     if len(phone) != 11:
         print('手机号码格式错误，请输入正确的手机号码！')
     elif  user_info_form[2] not in STAFF_DATA['phone']:
-            STAFF_DATA['staff_id'].append(staff_id_new)
-            STAFF_DATA['name'].append(user_info_form[0])
-            STAFF_DATA['age'].append(user_info_form[1])
-            STAFF_DATA['phone'].append(phone)
-            STAFF_DATA['dep'].append(user_info_form[3])
-            STAFF_DATA['enroll_date'].append(user_info_form[4]+'\n')
-            print(STAFF_DATA)
-            save_db()
-            os.remove(db_file)
-            os.rename(new_db_file,db_file)
+        user_data = []
+        user_data.append(staff_id_new)
+        user_data += user_info_form
+        print(user_data)
+        STAFF_DATA['enroll_date'].append(user_data[4]+'\n')
+        for index,col in enumerate(COLUMN):
+            STAFF_DATA[col].append(user_data[index])
+
+        print(STAFF_DATA)
+
+        save_db()
+        os.remove(db_file)
+        os.rename(new_db_file,db_file)
     else:
         print_log('%s手机号已存在'%user_info_form[2],'error')
     # for i in COLUMN:
     #     print(STAFF_DATA[i])
 
 
-def syntax_delete(data_set,query_clause):
-    print("这是删除操作")
+def syntax_delete(user_data,where_clause):
+    """
+
+    :param STAFF_DATA:
+    :param query_clause:
+    :return:
+    """
+    del_user = user_data[0]
+
+    id = user_data[0][0].strip()
+    staff_index = STAFF_DATA['staff_id'].index(id)
+    conf_cmd = input('请问是否删除%s该条数据Y/N'%del_user)
+    if conf_cmd == 'y' or conf_cmd == 'Y':
+
+        for col in COLUMN:
+            del STAFF_DATA[col][staff_index]
+        print_log("已成功删除%s条记录"%len(user_data))
+    else:
+        print_log("已取消删除操作")
+
+    save_db()
+
+    os.remove(db_file)
+    os.rename(new_db_file, db_file)
 
 def syntax_where(clause):
     operator = {
@@ -204,7 +227,7 @@ def syntax_parser(cmd):
         'add':syntax_add,
         }
 
-    if cmd.split()[0] in ('find','add','delete','update'):
+    if cmd.split()[0] in ('find','add','del','update'):
         if 'where' in cmd:
 
             query_clause,where_clause = cmd.split('where')
@@ -225,7 +248,7 @@ def syntax_parser(cmd):
                 query_clause = cmd
         cmd_action = cmd.split()[0]
         if cmd_action in syntax_list:
-            syntax_list[cmd_action](match_records,query_clause)
+             syntax_list[cmd_action](match_records,query_clause)
 
 
     else:
