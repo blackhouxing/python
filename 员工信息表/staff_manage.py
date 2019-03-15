@@ -183,7 +183,7 @@ def syntax_delete(user_data,where_clause):
 
     id = user_data[0][0].strip()
     staff_index = STAFF_DATA['staff_id'].index(id)
-    conf_cmd = input('请问是否删除%s该条数据Y/N'%del_user)
+    conf_cmd = input('请问是否删除%s该条数据Y/N:'%del_user)
     if conf_cmd == 'y' or conf_cmd == 'Y':
 
         for col in COLUMN:
