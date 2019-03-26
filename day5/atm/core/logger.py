@@ -15,7 +15,6 @@ def logger(log_type):
     fh.setLevel(settings.LOG_LEVEL)
     formatter = logging.Formatter('%（asctimes - %(name)s - %(levelname)s - %(message)s')
 
-
     ch.setFormatter(formatter)
     fh.setFormatter(formatter)
 
