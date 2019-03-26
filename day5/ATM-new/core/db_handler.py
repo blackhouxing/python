@@ -27,4 +27,15 @@ def load_account_data(account):
 
 
 def save_db(account_data):
-    pass
+    account_file = os.path.join(SETTINGS.DATABASE['path'], "%s.json" % account_data['id'])
+    if os.path.isfile(account_file):
+        f = open("%s.new" % account_file, 'w')
+
+        data = json.dump(account_data, f)
+
+        f.close()
+        os.remove(account_file)
+        os.rename("%s.new" % account_file, account_file)
+        return {'status': 0, 'data': data}
+    else:
+        return {'status': -1, 'error': "account file does not exist!"}

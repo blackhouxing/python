@@ -31,8 +31,9 @@ DATABASE = {
     }
 
 TRANSFER_TYPE = {
-    'withdraw': '',
-    'check_info': '',
-    'payback': '',
-    'transfer': '',
+    'withdraw': {'action': 'minus', 'interest': 0.05},
+    'check_info': {'action': 'check', 'interest': 0},
+    'payback': {'action': 'plus', 'interest': 0},
+    'transfer': {'action': 'minus', 'interest': 0.05},
+    'consume': {'action': 'minus', 'interest': 0}
     }
