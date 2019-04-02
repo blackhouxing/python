@@ -64,7 +64,7 @@ def entrance():
 @entrance()
 def controller(user_obj):
     """功能分配"""
-
+    # 装饰器功能实现
 
     while True:
         for index,feature in enumerate(features):
