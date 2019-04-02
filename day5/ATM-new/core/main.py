@@ -25,6 +25,43 @@ features = [
 ]
 
 
+
+
+
+def entrance():
+    def out_wrapper(func):
+        def inner(*args, **kwargs):
+        # atm程序交互入口
+            user_obj = {
+                'is_authenticated': False,
+                'data': None,
+                }
+            retry_count = 0
+            while user_obj['is_authenticated'] is not True:
+                account = input("\033[32;1maccount:\033[0m").strip()
+
+                pwd = input("\033[32;1mpassword:\033[0m").strip()
+
+                auth_data = authenticate(account, pwd)
+                if auth_data:
+                    user_obj['is_authenticated'] = True
+                    user_obj['data'] = auth_data
+                    print("登录成功!")
+                    access_logger.info("user %s just logged in " % user_obj['data']['id'])
+                    func(user_obj, *args, **kwargs)
+
+                else:
+                    print("用户名密码不正确请重试")
+                retry_count += 1
+
+                if retry_count == 3:
+                    msg = "用户 %s 密码连续3次输入错误，已被锁定。请联系管理员！" % account
+                    print_error(msg)
+        return inner
+    return out_wrapper
+
+
+@entrance()
 def controller(user_obj):
     """功能分配"""
 
@@ -40,35 +77,3 @@ def controller(user_obj):
                 features[choice][1](user_obj, transaction_logger=transaction_logger, access_logger=access_logger)
             if choice == 'exit':
                 exit("bye")
-
-
-def entrance():
-    # atm程序交互入口
-    user_obj = {
-        'is_authenticated': False,
-        'data': None,
-        }
-    retry_count = 0
-    while user_obj['is_authenticated'] is not True:
-        account = input("\033[32;1maccount:\033[0m").strip()
-
-        pwd = input("\033[32;1mpassword:\033[0m").strip()
-
-        auth_data = authenticate(account, pwd)
-        if auth_data:
-            user_obj['is_authenticated'] = True
-            user_obj['data'] = auth_data
-            print("登录成功!")
-            access_logger.info("user %s just logged in " % user_obj['data']['id'])
-            controller(user_obj)
-
-        else:
-            print("用户名密码不正确请重试")
-        retry_count += 1
-
-        if retry_count == 3:
-            msg = "用户 %s 密码连续3次输入错误，已被锁定。请联系管理员！" % account
-            print_error(msg)
-
-
-
