@@ -21,6 +21,7 @@ features = [
     ('账户信息', logics.view_account_info),
     ('取现', logics.with_draw),
     ('还款', logics.pay_back),
+    ('转账',logics.transfer),
 ]
 
 

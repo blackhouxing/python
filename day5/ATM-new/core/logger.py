@@ -12,8 +12,8 @@ from conf import SETTINGS
 
 
 def logger(log_type):
-    logger = logging.getLogger(log_type)
-    logger.setLevel(SETTINGS.LOG_LEVEL)
+    logger = logging.getLogger(log_type) #定义日志类型
+    logger.setLevel(SETTINGS.LOG_LEVEL)#确定记录日志的级别
     log_file = os.path.join(SETTINGS.LOG_PATH, SETTINGS.LOG_TYPE[log_type])
     fh = logging.FileHandler(log_file)
     fh.setLevel(SETTINGS.LOG_LEVEL)

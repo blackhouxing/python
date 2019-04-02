@@ -1,9 +1,1 @@
-{"balance": 15000,
-  "expire_date": "2022-01-01",
-  "enroll_date": "2014-01-01",
-  "credit": 15000,
-  "id": 4321,
-  "status": 0,
-  "pay_day": 22,
-  "password": "4321",
-}
+{"balance": 15480.0, "expire_date": "2022-01-01", "enroll_date": "2014-01-01", "credit": 15000, "id": 4321, "status": 0, "pay_day": 22, "password": "4321"}

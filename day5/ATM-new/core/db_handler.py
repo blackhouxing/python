@@ -21,9 +21,9 @@ def load_account_data(account):
         data = json.load(f)
         print(data)
         f.close()
-        return {'status': 0, 'data': data}
+        return {"status": 0, "data": data}
     else:
-        return {'status': -1, 'error': "account file does not exist."}
+        return {"status": -1, "error": "account file does not exist."}
 
 
 def save_db(account_data):
@@ -36,6 +36,6 @@ def save_db(account_data):
         f.close()
         os.remove(account_file)
         os.rename("%s.new" % account_file, account_file)
-        return {'status': 0, 'data': data}
+        return {"status": 0, "data": data}
     else:
-        return {'status': -1, 'error': "account file does not exist!"}
+        return {"status": -1, "error": "account file does not exist!"}
