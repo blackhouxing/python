@@ -93,4 +93,4 @@ for i, j in enumerate(school.teachers):
 
 for stu in school.students:
     print(stu.pay_tuition(5000))
-    
+
